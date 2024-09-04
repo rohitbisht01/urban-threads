@@ -41,7 +41,7 @@ const Login = () => {
         <p className="mt-2">
           Don&apos;t have an account.{" "}
           <Link
-            className="font-medium text-primary hover:underline text-blue-600"
+            className="font-medium hover:underline text-blue-600"
             to={"/auth/register"}
           >
             Register

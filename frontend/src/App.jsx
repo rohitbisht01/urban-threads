@@ -17,14 +17,19 @@ import UnauthorizedPage from "./pages/unauthorized-page";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuthAction } from "./store/auth-slice";
+import { Skeleton } from "./components/ui/skeleton";
 
 const App = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, isLoading } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(checkAuthAction());
   }, [dispatch]);
+
+  if (isLoading) return <Skeleton className="w-[800px] h-[600px]" />;
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">

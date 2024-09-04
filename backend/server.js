@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const connectDb = require("./helpers/database");
 
 const authRoute = require("./routes/auth");
+const adminProductRoute = require("./routes/admin/products");
 
 const PORT = process.env.PORT || 4000;
 
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRoute);
+app.use("/api/admin/products", adminProductRoute);
 
 app.listen(PORT, () => {
   console.log(`server running on ${PORT}`);

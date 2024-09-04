@@ -1,12 +1,12 @@
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@radix-ui/react-select";
+} from "../select";
 import { Input } from "../input";
 import { Label } from "../label";
-import { Select } from "../select";
 import { Textarea } from "../textarea";
 import { Button } from "../button";
 
@@ -16,6 +16,7 @@ const Form = ({
   setFormData,
   onSubmit,
   buttonText,
+  imageLoading = false,
 }) => {
   function renderInputsByComponentType(getControlItem) {
     let element = null;
@@ -53,7 +54,7 @@ const Form = ({
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={getControlItem.placeholder} />
+              <SelectValue placeholder={getControlItem.label} />
             </SelectTrigger>
             <SelectContent>
               {getControlItem.options && getControlItem.options.length > 0
@@ -117,7 +118,7 @@ const Form = ({
           </div>
         ))}
       </div>
-      <Button className="mt-4 w-full" type="submit">
+      <Button className="mt-4 w-full" type="submit" disabled={imageLoading}>
         {buttonText || "Submit"}
       </Button>
     </form>
