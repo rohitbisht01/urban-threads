@@ -7,6 +7,7 @@ const connectDb = require("./helpers/database");
 
 const authRoute = require("./routes/auth");
 const adminProductRoute = require("./routes/admin/products");
+const shopProductRoute = require("./routes/shop/products");
 
 const PORT = process.env.PORT || 4000;
 
@@ -33,6 +34,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoute);
 app.use("/api/admin/products", adminProductRoute);
+app.use("/api/shop/products", shopProductRoute);
 
 app.listen(PORT, () => {
   console.log(`server running on ${PORT}`);

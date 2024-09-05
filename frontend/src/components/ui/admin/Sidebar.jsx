@@ -88,7 +88,7 @@ const SidebarItems = ({ setOpen }) => {
           >
             <Link
               to={route.href}
-              className="flex items-center my-2 gap-3 font-medium hover:bg-slate-200 hover:text-black p-2 rounded-md ease-in duration-200 "
+              className="flex items-center my-2 gap-3 font-medium hover:bg-slate-200 hover:text-black p-2 rounded-md ease-in duration-200"
             >
               <Icon />
               <p className="text-lg">{route.label}</p>
