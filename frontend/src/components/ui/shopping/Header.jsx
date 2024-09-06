@@ -18,16 +18,12 @@ import { toast } from "@/hooks/use-toast";
 import CartWrapper from "./CartWrapper";
 import { useEffect, useState } from "react";
 import { fetchAllCartItemsAction } from "@/store/shop/cart-slice";
+import { Label } from "../label";
 
 const menuItemsList = [
   {
     id: "home",
     label: "Home",
-    href: "/shop/home",
-  },
-  {
-    id: "products",
-    label: "Products",
     href: "/shop/home",
   },
   {
@@ -43,17 +39,32 @@ const menuItemsList = [
 ];
 
 const MenuItems = () => {
+  const navigate = useNavigate();
+
+  const handleNavigateToListing = (currentItem) => {
+    sessionStorage.clear("filters");
+    const currentFilter =
+      currentItem.id !== "home"
+        ? {
+            category: [currentItem.id],
+          }
+        : null;
+
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+    navigate(currentItem.href);
+  };
+
   return (
     <div className="flex flex-col mb-3 lg:mb-0 lg:items-center sm:gap-2 gap-6 lg:flex-row">
       {menuItemsList.map((item) => {
         return (
-          <Link
-            className="sm:text-sm hover:bg-slate-200 sm:rounded-md p-2 font-medium text-sm  ease-in duration-200 "
+          <Label
+            className="sm:text-sm hover:bg-slate-200 sm:rounded-md p-2 font-medium text-sm  ease-in duration-200 cursor-pointer"
             key={item.id}
-            to={item.href}
+            onClick={() => handleNavigateToListing(item)}
           >
             {item.label}
-          </Link>
+          </Label>
         );
       })}
     </div>
