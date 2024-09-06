@@ -3,9 +3,9 @@ import { Badge } from "../badge";
 import { Button } from "../button";
 import { Card, CardContent, CardFooter } from "../card";
 
-const UserProductTile = ({ product }) => {
+const UserProductTile = ({ product, handleProductDetails }) => {
   return (
-    <div className="mt-4">
+    <div className="mt-4" onClick={() => handleProductDetails(product?._id)}>
       <Card className="w-full max-w-sm mx-auto">
         <div>
           <div className="relative">
