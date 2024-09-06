@@ -19,12 +19,19 @@ import {
 import UserProductTile from "@/components/ui/shopping/UserProductTile";
 import { useSearchParams } from "react-router-dom";
 import ProductDetails from "@/components/ui/shopping/ProductDetails";
+import {
+  addToCartAction,
+  fetchAllCartItemsAction,
+} from "@/store/shop/cart-slice";
+import { toast } from "@/hooks/use-toast";
 
 const ShoppingListing = () => {
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -99,6 +106,19 @@ const ShoppingListing = () => {
     }
   }, [productDetails]);
 
+  const handleAddToCart = (productId) => {
+    dispatch(
+      addToCartAction({ userId: user?.id, productId, quantity: 1 })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchAllCartItemsAction(user?.id));
+        toast({
+          title: "Product added",
+        });
+      }
+    });
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
       <ProductFilter filters={filters} handleFilter={handleFilter} />
@@ -142,6 +162,7 @@ const ShoppingListing = () => {
                 <UserProductTile
                   product={product}
                   handleProductDetails={handleProductDetails}
+                  handleAddToCart={handleAddToCart}
                 />
               </Fragment>
             );

@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logoutUserAction } from "@/store/auth-slice";
 import { toast } from "@/hooks/use-toast";
+import CartWrapper from "./CartWrapper";
+import { useEffect, useState } from "react";
+import { fetchAllCartItemsAction } from "@/store/shop/cart-slice";
 
 const menuItemsList = [
   {
@@ -60,6 +63,9 @@ const MenuItems = () => {
 const HeaderRightContent = ({ user }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.shopCart);
+
+  const [openCartSheet, setOpenCartSheet] = useState(false);
 
   const handleLogout = () => {
     dispatch(logoutUserAction()).then((data) => {
@@ -69,12 +75,27 @@ const HeaderRightContent = ({ user }) => {
     });
   };
 
+  useEffect(() => {
+    dispatch(fetchAllCartItemsAction(user?.id));
+  }, [dispatch]);
+
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-3">
-      <Button variant="outline" size="icon">
-        <ShoppingCart />
-        <span className="sr-only">Shopping Cart</span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setOpenCartSheet(true)}
+        >
+          <ShoppingCart />
+          <span className="sr-only">Shopping Cart</span>
+        </Button>
+        <CartWrapper
+          cartItems={
+            cartItems && cartItems.items?.length > 0 ? cartItems.items : []
+          }
+        />
+      </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black cursor-pointer">

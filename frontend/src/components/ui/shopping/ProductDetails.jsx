@@ -5,11 +5,41 @@ import { Avatar, AvatarFallback } from "../avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../input";
 import { Badge } from "../badge";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCartAction,
+  fetchAllCartItemsAction,
+} from "@/store/shop/cart-slice";
+import { toast } from "@/hooks/use-toast";
+import { setProductDetails } from "@/store/shop/product-slice";
 
 const ProductDetails = ({ open, setOpen, productInfo }) => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const handleAddToCart = (productId) => {
+    console.log(productId);
+
+    dispatch(
+      addToCartAction({ userId: user?.id, productId, quantity: 1 })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchAllCartItemsAction(user?.id));
+        toast({
+          title: "Product added",
+        });
+      }
+    });
+  };
+
+  const handleDialogClose = () => {
+    setOpen(false);
+    dispatch(setProductDetails());
+  };
+
   return (
     <div className="">
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleDialogClose}>
         <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
           <div className="relative overflow-hidden rounded-lg">
             <img
@@ -65,7 +95,12 @@ const ProductDetails = ({ open, setOpen, productInfo }) => {
             </div>
 
             <div className="mt-5 mb-5">
-              <Button className="w-full">Add to Cart</Button>
+              <Button
+                className="w-full"
+                onClick={() => handleAddToCart(productInfo?._id)}
+              >
+                Add to Cart
+              </Button>
             </div>
             <Separator />
 

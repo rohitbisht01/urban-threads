@@ -55,24 +55,23 @@ const addProductToCart = async (req, res) => {
 const fetchCartItems = async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log(req.params);
 
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: "userId not found",
+        message: "User id is manadatory!",
       });
     }
 
     const cart = await Cart.findOne({ userId }).populate({
-      path: "item.productId",
+      path: "items.productId",
       select: "image title price saleprice",
     });
 
     if (!cart) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "cart not found",
+        message: "Cart not found!",
       });
     }
 
@@ -90,19 +89,22 @@ const fetchCartItems = async (req, res) => {
       image: item.productId.image,
       title: item.productId.title,
       price: item.productId.price,
-      saleprice: item.productId.saleprice,
+      salePrice: item.productId.saleprice,
       quantity: item.quantity,
     }));
 
     res.status(200).json({
       success: true,
-      data: { ...cart._doc, items: populateCartItems },
+      data: {
+        ...cart._doc,
+        items: populateCartItems,
+      },
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Error fetching cart items",
+      message: "Error",
     });
   }
 };
@@ -171,35 +173,35 @@ const updateCartItems = async (req, res) => {
 // delete product from cart
 const deleteCartItems = async (req, res) => {
   try {
-    const { userId, productId } = req.body;
-
+    const { userId, productId } = req.params;
     if (!userId || !productId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid data provided",
+        message: "Invalid data provided!",
       });
     }
 
     const cart = await Cart.findOne({ userId }).populate({
-      path: "item.productId",
-      select: "image title price saleprice",
+      path: "items.productId",
+      select: "image title price salePrice",
     });
 
     if (!cart) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "cart not found",
+        message: "Cart not found!",
       });
     }
 
     cart.items = cart.items.filter(
       (item) => item.productId._id.toString() !== productId
     );
+
     await cart.save();
 
-    await Cart.populate({
-      path: "item.productId",
-      select: "image title price saleprice",
+    await cart.populate({
+      path: "items.productId",
+      select: "image title price salePrice",
     });
 
     const populateCartItems = cart.items.map((item) => ({
@@ -207,19 +209,22 @@ const deleteCartItems = async (req, res) => {
       image: item.productId ? item.productId.image : null,
       title: item.productId ? item.productId.title : "Product not found",
       price: item.productId ? item.productId.price : null,
-      saleprice: item.productId ? item.productId.saleprice : null,
+      salePrice: item.productId ? item.productId.salePrice : null,
       quantity: item.quantity,
     }));
 
     res.status(200).json({
       success: true,
-      data: { ...cart._doc, items: populateCartItems },
+      data: {
+        ...cart._doc,
+        items: populateCartItems,
+      },
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Error deleting cart items",
+      message: "Error",
     });
   }
 };

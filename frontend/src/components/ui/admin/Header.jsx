@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../button";
 import { LogOut, Menu } from "lucide-react";
 import { logoutUserAction } from "@/store/auth-slice";

@@ -8,14 +8,11 @@ const initialState = {
 
 // get cart items async thunk action
 export const fetchAllCartItemsAction = createAsyncThunk(
-  "cart/getCart",
+  "cart/fetchAllCartItemsAction",
   async (userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/shop/cart/add/${userId}`,
-        {
-          withCredentials: true,
-        }
+        `http://localhost:4000/api/shop/cart/get/${userId}`
       );
 
       return response.data;
@@ -27,7 +24,7 @@ export const fetchAllCartItemsAction = createAsyncThunk(
 
 // add to cart async thunk action
 export const addToCartAction = createAsyncThunk(
-  "cart/addToCart",
+  "cart/addToCartAction",
   async ({ userId, productId, quantity }) => {
     try {
       const response = await axios.post(
@@ -36,10 +33,10 @@ export const addToCartAction = createAsyncThunk(
           userId,
           productId,
           quantity,
-        },
-        {
-          withCredentials: true,
         }
+        // {
+        //   withCredentials: true,
+        // }
       );
 
       return response.data;
@@ -51,14 +48,14 @@ export const addToCartAction = createAsyncThunk(
 
 // delete cart items async thunk action
 export const deleteCartItemAction = createAsyncThunk(
-  "cart/deleteItem",
+  "cart/deleteCartItemAction",
   async ({ userId, productId }) => {
     try {
       const response = await axios.delete(
-        `http://localhost:4000/api/shop/cart/${userId}/${productId}`,
-        {
-          withCredentials: true,
-        }
+        `http://localhost:4000/api/shop/cart/${userId}/${productId}`
+        // {
+        //   withCredentials: true,
+        // }
       );
 
       return response.data;
@@ -70,15 +67,15 @@ export const deleteCartItemAction = createAsyncThunk(
 
 // update cart items async thunk action
 export const updateCartItemAction = createAsyncThunk(
-  "cart/updatedCart",
+  "cart/updateCartItemAction",
   async ({ userId, productId, quantity }) => {
     try {
       const response = await axios.put(
         `http://localhost:4000/api/shop/cart/update-cart`,
-        { userId, productId, quantity },
-        {
-          withCredentials: true,
-        }
+        { userId, productId, quantity }
+        // {
+        //   withCredentials: true,
+        // }
       );
 
       return response.data;
