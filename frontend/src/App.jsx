@@ -18,6 +18,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuthAction } from "./store/auth-slice";
 import { Skeleton } from "./components/ui/skeleton";
+import PaypalReturn from "./pages/shopping/PaypalReturn";
+import PaymentSuccess from "./pages/shopping/PaymentSuccess";
+import Search from "./pages/shopping/Search";
 
 const App = () => {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -33,10 +36,15 @@ const App = () => {
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
-      {/* common components */}
-      {/* <h1>Heading</h1> */}
-
       <Routes>
+        <Route
+          path="/"
+          element={
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+              <AuthLayout />
+            </CheckAuth>
+          }
+        ></Route>
         <Route
           path="/auth"
           element={
@@ -72,6 +80,9 @@ const App = () => {
           <Route path="listing" element={<ShoppingListing />} />
           <Route path="account" element={<AccountPage />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="search" element={<Search />} />
+          <Route path="paypal-return" element={<PaypalReturn />} />
+          <Route path="payment-success" element={<PaymentSuccess />} />
         </Route>
         <Route path="unauth-page" element={<UnauthorizedPage />} />
         <Route path="*" element={<NotFound />} />

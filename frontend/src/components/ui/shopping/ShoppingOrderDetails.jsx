@@ -7,53 +7,82 @@ const ShoppingOrderDetails = ({ orderDetails }) => {
   const { user } = useSelector((state) => state.auth);
 
   return (
-    <DialogContent className="sm:max-w-[600px]">
-      <div className="grid gap-6">
-        <div className="grid gap-2">
-          <div className="flex mt-6 items-center justify-between">
-            <p className="font-medium">Order ID</p>
+    <DialogContent className="sm:max-w-[700px]">
+      <div className="space-y-6">
+        {/* Order Summary Section */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Order Summary</h2>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Order ID:</span>
             <Label>{orderDetails?._id}</Label>
           </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Order Date</p>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Order Date:</span>
             <Label>{orderDetails?.orderDate.split("T")[0]}</Label>
           </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Order Price</p>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Order Total:</span>
             <Label>${orderDetails?.totalAmount}</Label>
           </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Payment method</p>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Payment Method:</span>
             <Label>{orderDetails?.paymentMethod}</Label>
           </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Payment Status</p>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Payment Status:</span>
             <Label>{orderDetails?.paymentStatus}</Label>
           </div>
-        </div>
-        <Separator />
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <div className="font-medium">Order Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span>Product One</span>
-                <span>$100</span>
-              </li>
-            </ul>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Order Status:</span>
+            <Label>{orderDetails?.orderStatus}</Label>
           </div>
         </div>
-      </div>
-      <div className="grid gap-4">
-        <div className="grid gap-2">
-          <div className="font-medium">Shipping Information</div>
-          <div className="grid gap-0.5 text-muted-foreground">
-            <span>{user.userName}</span>
-            <span>{orderDetails?.addressInfo?.address}</span>
-            <span>{orderDetails?.addressInfo?.city}</span>
-            <span>{orderDetails?.addressInfo?.pincode}</span>
-            <span>{orderDetails?.addressInfo?.phone}</span>
-            <span>{orderDetails?.addressInfo?.notes}</span>
+
+        <Separator />
+
+        {/* Order Details Section */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Items Ordered</h2>
+          <ul className="space-y-3">
+            {orderDetails?.cartItems?.map((item) => (
+              <li
+                key={item?.productId}
+                className="flex justify-between items-center"
+              >
+                <div className="flex items-center space-x-4">
+                  {/* <div className="w-16 h-16 bg-gray-200"> */}
+                  <img
+                    src={item?.image}
+                    className="w-16 h-16 object-cover"
+                    alt=""
+                  />
+                  <div>
+                    <p className="font-medium">{item?.title}</p>
+                    <p className="text-sm text-gray-500">
+                      {item?.quantity} x ${item?.price}
+                    </p>
+                  </div>
+                </div>
+                <div className="font-semibold">
+                  ${item?.price * item?.quantity}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <Separator />
+
+        {/* Shipping Information Section */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Shipping Information</h2>
+          <div className="text-muted-foreground space-y-1">
+            <p>{user?.userName}</p>
+            <p>{orderDetails?.addressInfo?.address}</p>
+            <p>{orderDetails?.addressInfo?.city}</p>
+            <p>{orderDetails?.addressInfo?.pincode}</p>
+            <p>{orderDetails?.addressInfo?.phone}</p>
+            <p>{orderDetails?.addressInfo?.notes}</p>
           </div>
         </div>
       </div>

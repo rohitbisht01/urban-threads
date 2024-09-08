@@ -2,7 +2,6 @@ import ProductFilter from "@/components/ui/shopping/ProductFilter";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
@@ -29,6 +28,7 @@ const ShoppingListing = () => {
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
+  const { cartItems } = useSelector((state) => state.shopCart);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -37,6 +37,8 @@ const ShoppingListing = () => {
 
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(null);
+
+  const categorySearchParam = searchParams.get("category");
 
   const handleSort = (value) => {
     setSort(value);
@@ -75,7 +77,7 @@ const ShoppingListing = () => {
   useEffect(() => {
     setSort("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
-  }, []);
+  }, [categorySearchParam]);
 
   const createSearchParams = (filterParams) => {
     const queryParams = [];
@@ -106,7 +108,26 @@ const ShoppingListing = () => {
     }
   }, [productDetails]);
 
-  const handleAddToCart = (productId) => {
+  const handleAddToCart = (productId, totalStock) => {
+    let getCartItems = cartItems.items || [];
+
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId === productId
+      );
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        if (getQuantity + 1 > totalStock) {
+          toast({
+            title: `Only ${getQuantity} quantity can be added for this item`,
+            variant: "destructive",
+          });
+
+          return;
+        }
+      }
+    }
+
     dispatch(
       addToCartAction({ userId: user?.id, productId, quantity: 1 })
     ).then((data) => {

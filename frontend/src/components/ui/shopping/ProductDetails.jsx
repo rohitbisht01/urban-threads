@@ -12,13 +12,44 @@ import {
 } from "@/store/shop/cart-slice";
 import { toast } from "@/hooks/use-toast";
 import { setProductDetails } from "@/store/shop/product-slice";
+import { Label } from "../label";
+import StarRating from "../common/StarRating";
+import { useEffect, useState } from "react";
+import {
+  addProductReviewAction,
+  getProductReviewsAction,
+} from "@/store/shop/review-slice";
 
 const ProductDetails = ({ open, setOpen, productInfo }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
+  const { reviews } = useSelector((state) => state.review);
 
-  const handleAddToCart = (productId) => {
-    console.log(productId);
+  const [reviewMsg, setReviewMsg] = useState("");
+  const [rating, setRating] = useState(0);
+
+  const handleAddToCart = (productId, totalStock) => {
+    let getCartItems = cartItems.items || [];
+
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId === productId
+      );
+
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+
+        if (getQuantity + 1 > totalStock) {
+          toast({
+            title: `Only ${getQuantity} quantity can be added`,
+            variant: "destructive",
+          });
+
+          return;
+        }
+      }
+    }
 
     dispatch(
       addToCartAction({ userId: user?.id, productId, quantity: 1 })
@@ -35,7 +66,48 @@ const ProductDetails = ({ open, setOpen, productInfo }) => {
   const handleDialogClose = () => {
     setOpen(false);
     dispatch(setProductDetails());
+    setRating(0);
+    setReviewMsg("");
   };
+
+  const handleRatingChange = (updatedRating) => {
+    setRating(updatedRating);
+  };
+
+  const handleAddReview = () => {
+    console.log(productInfo);
+
+    dispatch(
+      addProductReviewAction({
+        productId: productInfo?._id,
+        userId: user?.id,
+        userName: user?.username,
+        reviewMessage: reviewMsg,
+        reviewValue: rating,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        setRating(0);
+        setReviewMsg("");
+        dispatch(getProductReviewsAction(productInfo?._id));
+        toast({
+          title: "Review added",
+        });
+      }
+    });
+  };
+
+  const averageReview =
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
+        reviews.length
+      : 0;
+
+  useEffect(() => {
+    if (productInfo !== null) {
+      dispatch(getProductReviewsAction(productInfo?._id));
+    }
+  }, [productInfo]);
 
   return (
     <div className="">
@@ -84,29 +156,64 @@ const ProductDetails = ({ open, setOpen, productInfo }) => {
               </p>
             </div>
             <div className="flex items-center mt-2">
-              <StarIcon className="w-4 h-4 fill-primary" />
-              <StarIcon className="w-4 h-4 fill-primary" />
-              <StarIcon className="w-4 h-4 fill-primary" />
-              <StarIcon className="w-4 h-4 fill-primary" />
-              <StarIcon className="w-4 h-4 fill-primary" />
+              <StarRating rating={averageReview} />
               <span className="text-sm text-muted-foreground pl-2">
-                4.5 Stars
+                {averageReview} Stars
               </span>
             </div>
 
             <div className="mt-5 mb-5">
-              <Button
-                className="w-full"
-                onClick={() => handleAddToCart(productInfo?._id)}
-              >
-                Add to Cart
-              </Button>
+              {ProductDetails?.totalstock === 0 ? (
+                <Button
+                  className="w-full cursor-not-allowed opacity-50"
+                  onClick={() =>
+                    handleAddToCart(productInfo?._id, productInfo?.totalstock)
+                  }
+                >
+                  Out of stock
+                </Button>
+              ) : (
+                <Button
+                  className="w-full"
+                  onClick={() =>
+                    handleAddToCart(productInfo?._id, productInfo?.totalstock)
+                  }
+                >
+                  Add to Cart
+                </Button>
+              )}
             </div>
             <Separator />
 
             <div className="max-h-[300px] overflow-auto">
               <h2 className="text-xl font-bold mt-2 mb-4">Reviews</h2>
               <div className="grid gap-6">
+                {reviews && reviews.length > 0 ? (
+                  reviews.map((review) => {
+                    return (
+                      <div className="flex gap-4" key={review?.productId}>
+                        <Avatar className="w-10 h-10 border">
+                          <AvatarFallback>
+                            {review?.userName[0].toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="grid gap-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-bold">{review?.username}</h3>
+                          </div>
+                          <div className="flex items-center gap-0.5">
+                            <StarRating rating={review?.reviewValue} />
+                          </div>
+                          <p className="text-muted-foreground">
+                            {review?.reviewMessage}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <h2>No reviews</h2>
+                )}
                 <div className="flex gap-4">
                   <Avatar className="w-10 h-10 border">
                     <AvatarFallback>RB</AvatarFallback>
@@ -127,33 +234,29 @@ const ProductDetails = ({ open, setOpen, productInfo }) => {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <Avatar className="w-10 h-10 border">
-                    <AvatarFallback>RB</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold">Rohit Bisht</h3>
-                    </div>
-                    <div className="flex items-center gap-0.5">
-                      <StarIcon className="w-4 h-4 fill-primary" />
-                      <StarIcon className="w-4 h-4 fill-primary" />
-                      <StarIcon className="w-4 h-4 fill-primary" />
-                      <StarIcon className="w-4 h-4 fill-primary" />
-                      <StarIcon className="w-4 h-4 fill-primary" />
-                    </div>
-                    <p className="text-muted-foreground">
-                      This is awesome product
-                    </p>
+
+                <div className="mt-6 flex flex-col gap-2">
+                  <Label>Write a review</Label>
+                  <div className="flex">
+                    <StarRating
+                      rating={rating}
+                      handleRatingChange={handleRatingChange}
+                    />
                   </div>
-                </div>
-                <div className="mt-6 flex gap-2">
                   <Input
                     type="text"
+                    name={"reviewMsg"}
+                    value={reviewMsg}
+                    onChange={(e) => setReviewMsg(e.target.value)}
                     placeholder="Write a review"
                     className=""
                   />
-                  <Button>Submit</Button>
+                  <Button
+                    disabled={reviewMsg.trim() === ""}
+                    onClick={handleAddReview}
+                  >
+                    Submit
+                  </Button>
                 </div>
               </div>
             </div>

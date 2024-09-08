@@ -1,5 +1,7 @@
 const Order = require("../../models/order");
 const paypal = require("../../helpers/paypal");
+const Cart = require("../../models/cart");
+const Product = require("../../models/product");
 
 const getOrderDetails = async (req, res) => {
   try {
@@ -97,14 +99,14 @@ const createOrder = async (req, res) => {
             items: cartItems.map((item) => ({
               name: item.title,
               sku: item.productId,
-              price: item.price.toFixed(2),
+              price: item.price?.toFixed(2),
               currency: "USD",
               quantity: item.quantity,
             })),
           },
           amount: {
             currency: "USD",
-            total: totalAmount.toFixed(2),
+            total: totalAmount?.toFixed(2),
           },
           description: "description",
         },
@@ -159,6 +161,45 @@ const createOrder = async (req, res) => {
 
 const capturePayment = async (req, res) => {
   try {
+    const { paymentId, payerId, orderId } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    order.paymentStatus = "paid";
+    order.orderStatus = "confirmed";
+    order.paymentId = paymentId;
+    order.payerId = payerId;
+
+    for (let item of order.cartItems) {
+      let product = await Product.findById(item.productId);
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: `Out of stock ${product.title}`,
+        });
+      }
+
+      product.totalstock -= item.quantity;
+      await product.save();
+    }
+
+    const cartId = order.cartId;
+    await Cart.findByIdAndDelete(cartId);
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "deleted cart items and order confirmed",
+      data: order,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

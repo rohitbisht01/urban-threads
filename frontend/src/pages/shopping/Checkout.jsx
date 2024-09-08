@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import Address from "@/components/ui/shopping/Address";
 import CartItemsContent from "@/components/ui/shopping/CartItemsContent";
 import { useToast } from "@/hooks/use-toast";
+import { createNewOrderAction } from "@/store/shop/shop-order-slice";
 import { useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 const Checkout = () => {
   const { cartItems } = useSelector((state) => state.shopCart);
   const { user } = useSelector((state) => state.auth);
+  const { approvalURL } = useSelector((state) => state.shopOrder);
   const dispatch = useDispatch();
 
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
@@ -43,7 +45,47 @@ const Checkout = () => {
 
       return;
     }
+
+    const orderData = {
+      userId: user?.id,
+      cartId: cartItems?._id,
+      cartItems: cartItems?.items?.map((item) => ({
+        productId: item?.productId,
+        title: item?.title,
+        price: item?.saleprice > 0 ? item?.saleprice : item?.price,
+        quantity: item?.quantity,
+        image: item?.image,
+      })),
+      addressInfo: {
+        addressId: currentSelectedAddress?._id,
+        address: currentSelectedAddress?.address,
+        city: currentSelectedAddress?.city,
+        pincode: currentSelectedAddress?.pincode,
+        phone: currentSelectedAddress?.phone,
+        notes: currentSelectedAddress?.notes,
+      },
+      orderStatus: "pending",
+      paymentMethod: "paypal",
+      paymentStatus: "pending",
+      totalAmount: totalCartAmount,
+      orderDate: new Date(),
+      orderUpdateDate: new Date(),
+      paymentId: "",
+      payerId: "",
+    };
+
+    dispatch(createNewOrderAction(orderData)).then((data) => {
+      if (data?.payload?.success) {
+        setIsPaymentStart(true);
+      } else {
+        setIsPaymentStart(false);
+      }
+    });
   };
+
+  if (approvalURL) {
+    window.location.href = approvalURL;
+  }
 
   return (
     <div className="flex flex-col">

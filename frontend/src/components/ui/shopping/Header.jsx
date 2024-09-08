@@ -35,7 +35,7 @@ const menuItemsList = [
   { id: "kids", label: "Kids", href: "/shop/listing" },
 
   { id: "accessories", label: "Accessories", href: "/shop/listing" },
-  { id: "search", label: "Search", href: "/shop/listing" },
+  { id: "search", label: "Search", href: "/shop/search" },
 ];
 
 const MenuItems = () => {
@@ -97,8 +97,12 @@ const HeaderRightContent = ({ user }) => {
           variant="outline"
           size="icon"
           onClick={() => setOpenCartSheet(true)}
+          className="relative"
         >
           <ShoppingCart />
+          <span className="absolute top-[-8px] right-0 font-bold text-sm">
+            {cartItems?.items?.length || 0}
+          </span>
           <span className="sr-only">Shopping Cart</span>
         </Button>
         <CartWrapper

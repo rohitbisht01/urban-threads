@@ -5,6 +5,11 @@ import { Label } from "../label";
 import { useState } from "react";
 import { Separator } from "../separator";
 import Form from "../common/Form";
+import {
+  fetchAllOrdersForAdminAction,
+  fetchOrderDetailForAdminAction,
+  updateOrderStatusAction,
+} from "@/store/admin/order-slice";
 
 const initialFormData = {
   status: "",
@@ -16,9 +21,23 @@ const OrderDetails = ({ orderDetails }) => {
   const dispatch = useDispatch();
   const { toast } = useToast();
 
-  const handleUpdateStatus = (e) => {
-    e.preventDefault();
-  };
+  function handleUpdateStatus(event) {
+    event.preventDefault();
+    const { status } = formData;
+
+    dispatch(
+      updateOrderStatusAction({ id: orderDetails?._id, orderStatus: status })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchOrderDetailForAdminAction(orderDetails?._id));
+        dispatch(fetchAllOrdersForAdminAction());
+        setFormData(initialFormData);
+        toast({
+          title: data?.payload?.message,
+        });
+      }
+    });
+  }
 
   return (
     <DialogContent className="sm:max-w-[600px]">
@@ -46,16 +65,34 @@ const OrderDetails = ({ orderDetails }) => {
           </div>
         </div>
         <Separator />
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <div className="font-medium">Order Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span>Product One</span>
-                <span>$100</span>
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Items Ordered</h2>
+          <ul className="space-y-3">
+            {orderDetails?.cartItems?.map((item) => (
+              <li
+                key={item?.productId}
+                className="flex justify-between items-center"
+              >
+                <div className="flex items-center space-x-4">
+                  {/* <div className="w-16 h-16 bg-gray-200"> */}
+                  <img
+                    src={item?.image}
+                    className="w-16 h-16 object-cover"
+                    alt=""
+                  />
+                  <div>
+                    <p className="font-medium">{item?.title}</p>
+                    <p className="text-sm text-gray-500">
+                      {item?.quantity} x ${item?.price}
+                    </p>
+                  </div>
+                </div>
+                <div className="font-semibold">
+                  ${item?.price * item?.quantity}
+                </div>
               </li>
-            </ul>
-          </div>
+            ))}
+          </ul>
         </div>
       </div>
       <div className="grid gap-4">
@@ -81,7 +118,7 @@ const OrderDetails = ({ orderDetails }) => {
               options: [
                 { id: "pending", label: "Pending" },
                 { id: "inprocess", label: "In Process" },
-                { id: "inhipping", label: "In Shipping" },
+                { id: "inshipping", label: "In Shipping" },
                 { id: "delivered", label: "Delivered" },
                 { id: "rejected", label: "Rejected" },
               ],
