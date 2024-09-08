@@ -13,7 +13,7 @@ export const registerUserAction = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/register",
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
         formData,
         {
           withCredentials: true,
@@ -35,7 +35,7 @@ export const loginUserAction = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/login",
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
         formData,
         {
           withCredentials: true,
@@ -55,7 +55,7 @@ export const loginUserAction = createAsyncThunk(
 export const logoutUserAction = createAsyncThunk("/auth/logout", async () => {
   try {
     const response = await axios.post(
-      "http://localhost:4000/api/auth/logout",
+      `${import.meta.env.VITE_API_URL}/api/auth/logout`,
       {},
       {
         withCredentials: true,
@@ -74,7 +74,7 @@ export const checkAuthAction = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/api/auth/check-auth",
+        `${import.meta.env.VITE_API_URL}/api/auth/check-auth`,
         {
           withCredentials: true,
           headers: {
@@ -97,22 +97,22 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+    // setUser: (state, action) => {},
   },
   // extraReducers helps to update state like what will happen after the api call
   extraReducers: (builder) => {
     // Register user builder
     builder
-      .addCase(registerUserAction.pending, (state, action) => {
+      .addCase(registerUserAction.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(registerUserAction.fulfilled, (state, action) => {
+      .addCase(registerUserAction.fulfilled, (state) => {
         state.isLoading = false;
         // state.user = action.payload;
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(registerUserAction.rejected, (state, action) => {
+      .addCase(registerUserAction.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
@@ -120,7 +120,7 @@ const authSlice = createSlice({
 
     // Login user builder
     builder
-      .addCase(loginUserAction.pending, (state, action) => {
+      .addCase(loginUserAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(loginUserAction.fulfilled, (state, action) => {
@@ -128,7 +128,7 @@ const authSlice = createSlice({
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success ? true : false;
       })
-      .addCase(loginUserAction.rejected, (state, action) => {
+      .addCase(loginUserAction.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
@@ -136,7 +136,7 @@ const authSlice = createSlice({
 
     // authenticate user with every request
     builder
-      .addCase(checkAuthAction.pending, (state, action) => {
+      .addCase(checkAuthAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(checkAuthAction.fulfilled, (state, action) => {
@@ -144,7 +144,7 @@ const authSlice = createSlice({
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success ? true : false;
       })
-      .addCase(checkAuthAction.rejected, (state, action) => {
+      .addCase(checkAuthAction.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;

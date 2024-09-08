@@ -72,9 +72,14 @@ Urban Thread is a modern e-commerce platform built to provide seamless shopping 
 
    JWT_SECRET=
    JWT_EXPIRES_IN=
+
+   PAYPAL_MODE=
+   PAYPAL_CLIENT_ID=
+   PAYPAL_CLIENT_SECRET=
    ```
 
 4. **Run the application (both frontend and backend):**
+
    ```
    npm run dev
    ```

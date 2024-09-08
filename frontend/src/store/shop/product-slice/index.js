@@ -18,7 +18,7 @@ export const fetchAllShopProducts = createAsyncThunk(
       });
 
       const response = await axios.get(
-        `http://localhost:4000/api/shop/products/get?${query}`,
+        `${import.meta.env.VITE_API_URL}/api/shop/products/get?${query}`,
         {
           withCredentials: true,
         }
@@ -37,7 +37,7 @@ export const getproductDetailsAction = createAsyncThunk(
   async (productId) => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/shop/products/get/${productId}`,
+        `${import.meta.env.VITE_API_URL}/api/shop/products/get/${productId}`,
         {
           withCredentials: true,
         }
@@ -53,30 +53,30 @@ const shopProductSlice = createSlice({
   name: "shopProduct",
   initialState,
   reducers: {
-    setProductDetails: (state, action) => {
+    setProductDetails: (state) => {
       state.productDetails = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllShopProducts.pending, (state, action) => {
+      .addCase(fetchAllShopProducts.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(fetchAllShopProducts.fulfilled, (state, action) => {
         state.isLoading = false;
         state.productList = action?.payload?.data;
       })
-      .addCase(fetchAllShopProducts.rejected, (state, action) => {
+      .addCase(fetchAllShopProducts.rejected, (state) => {
         state.isLoading = false;
       })
-      .addCase(getproductDetailsAction.pending, (state, action) => {
+      .addCase(getproductDetailsAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getproductDetailsAction.fulfilled, (state, action) => {
         state.isLoading = false;
         state.productDetails = action?.payload?.data;
       })
-      .addCase(getproductDetailsAction.rejected, (state, action) => {
+      .addCase(getproductDetailsAction.rejected, (state) => {
         state.isLoading = false;
         state.productDetails = null;
       });

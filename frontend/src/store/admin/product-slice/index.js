@@ -12,7 +12,7 @@ export const addProductAction = createAsyncThunk(
   async (formData) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/admin/products/add",
+        `${import.meta.env.VITE_API_URL}/api/admin/products/add`,
         formData,
         {
           headers: {
@@ -35,7 +35,7 @@ export const fetchAllProductsAction = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/api/admin/products/get"
+        `${import.meta.env.VITE_API_URL}/api/admin/products/get`
       );
 
       return response?.data;
@@ -51,7 +51,7 @@ export const editProductAction = createAsyncThunk(
   async ({ id, formData }) => {
     try {
       const response = await axios.put(
-        `http://localhost:4000/api/admin/products/edit/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/products/edit/${id}`,
         formData,
         {
           headers: {
@@ -74,7 +74,7 @@ export const deleteProductAction = createAsyncThunk(
   async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:4000/api/admin/products/delete/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/products/delete/${id}`,
         {
           //   withCredentials: true,
         }
@@ -93,14 +93,14 @@ const adminProductSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllProductsAction.pending, (state, action) => {
+      .addCase(fetchAllProductsAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(fetchAllProductsAction.fulfilled, (state, action) => {
         state.isLoading = false;
         state.productList = action.payload.data;
       })
-      .addCase(fetchAllProductsAction.rejected, (state, action) => {
+      .addCase(fetchAllProductsAction.rejected, (state) => {
         state.isLoading = false;
         state.productList = [];
       });

@@ -12,7 +12,7 @@ export const fetchAllCartItemsAction = createAsyncThunk(
   async (userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/shop/cart/get/${userId}`
+        `${import.meta.env.VITE_API_URL}/api/shop/cart/get/${userId}`
       );
 
       return response.data;
@@ -28,7 +28,7 @@ export const addToCartAction = createAsyncThunk(
   async ({ userId, productId, quantity }) => {
     try {
       const response = await axios.post(
-        `http://localhost:4000/api/shop/cart/add`,
+        `${import.meta.env.VITE_API_URL}/api/shop/cart/add`,
         {
           userId,
           productId,
@@ -52,7 +52,7 @@ export const deleteCartItemAction = createAsyncThunk(
   async ({ userId, productId }) => {
     try {
       const response = await axios.delete(
-        `http://localhost:4000/api/shop/cart/${userId}/${productId}`
+        `${import.meta.env.VITE_API_URL}/api/shop/cart/${userId}/${productId}`
         // {
         //   withCredentials: true,
         // }
@@ -71,7 +71,7 @@ export const updateCartItemAction = createAsyncThunk(
   async ({ userId, productId, quantity }) => {
     try {
       const response = await axios.put(
-        `http://localhost:4000/api/shop/cart/update-cart`,
+        `${import.meta.env.VITE_API_URL}/api/shop/cart/update-cart`,
         { userId, productId, quantity }
         // {
         //   withCredentials: true,
@@ -91,47 +91,47 @@ const shopCartSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(addToCartAction.pending, (state, action) => {
+      .addCase(addToCartAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(addToCartAction.fulfilled, (state, action) => {
         state.isLoading = false;
         state.cartItems = action?.payload?.data;
       })
-      .addCase(addToCartAction.rejected, (state, action) => {
+      .addCase(addToCartAction.rejected, (state) => {
         state.isLoading = false;
         state.cartItems = [];
       })
-      .addCase(fetchAllCartItemsAction.pending, (state, action) => {
+      .addCase(fetchAllCartItemsAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(fetchAllCartItemsAction.fulfilled, (state, action) => {
         state.isLoading = false;
         state.cartItems = action?.payload?.data;
       })
-      .addCase(fetchAllCartItemsAction.rejected, (state, action) => {
+      .addCase(fetchAllCartItemsAction.rejected, (state) => {
         state.isLoading = false;
         state.cartItems = [];
       })
-      .addCase(updateCartItemAction.pending, (state, action) => {
+      .addCase(updateCartItemAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(updateCartItemAction.fulfilled, (state, action) => {
         state.isLoading = false;
         state.cartItems = action?.payload?.data;
       })
-      .addCase(updateCartItemAction.rejected, (state, action) => {
+      .addCase(updateCartItemAction.rejected, (state) => {
         state.isLoading = false;
         state.cartItems = [];
       })
-      .addCase(deleteCartItemAction.pending, (state, action) => {
+      .addCase(deleteCartItemAction.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(deleteCartItemAction.fulfilled, (state, action) => {
         state.isLoading = false;
         state.cartItems = action?.payload?.data;
       })
-      .addCase(deleteCartItemAction.rejected, (state, action) => {
+      .addCase(deleteCartItemAction.rejected, (state) => {
         state.isLoading = false;
         state.cartItems = [];
       });
