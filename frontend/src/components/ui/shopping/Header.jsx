@@ -13,8 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logoutUserAction } from "@/store/auth-slice";
-import { toast } from "@/hooks/use-toast";
+import { logoutUserAction, resetTokenAndCreds } from "@/store/auth-slice";
 import CartWrapper from "./CartWrapper";
 import { useEffect, useState } from "react";
 import { fetchAllCartItemsAction } from "@/store/shop/cart-slice";
@@ -79,11 +78,14 @@ const HeaderRightContent = ({ user }) => {
   const [openCartSheet, setOpenCartSheet] = useState(false);
 
   const handleLogout = () => {
-    dispatch(logoutUserAction()).then((data) => {
-      toast({
-        description: data?.payload?.message,
-      });
-    });
+    // dispatch(logoutUserAction()).then((data) => {
+    //   toast({
+    //     description: data?.payload?.message,
+    //   });
+    // });
+    dispatch(resetTokenAndCreds());
+    sessionStorage.clear();
+    navigate("/auth/login");
   };
 
   useEffect(() => {

@@ -92,21 +92,33 @@ const loginUser = async (req, res) => {
       }
     );
 
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-      })
-      .json({
-        success: true,
-        message: "Logged in successfully",
-        user: {
-          email: user.email,
-          role: user.role,
-          id: user._id,
-          user: user.username,
-        },
-      });
+    // res
+    //   .cookie("token", token, {
+    //     httpOnly: true,
+    //     secure: true,
+    //   })
+    //   .json({
+    //     success: true,
+    //     message: "Logged in successfully",
+    // user: {
+    //   email: user.email,
+    //   role: user.role,
+    //   id: user._id,
+    //   user: user.username,
+    // },
+    //   });
+
+    res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      token,
+      user: {
+        email: user.email,
+        role: user.role,
+        id: user._id,
+        user: user.username,
+      },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -133,8 +145,33 @@ const logoutUser = async (req, res) => {
 };
 
 // auth middleware
+// const authMiddleware = async (req, res, next) => {
+//   const token = req.cookies.token;
+
+//   if (!token)
+//     return res.status(401).json({
+//       success: false,
+//       message: "Unauthorized user",
+//     });
+
+//   try {
+//     // decode the token
+//     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = decodedToken;
+//     next();
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(401).json({
+//       success: false,
+//       message: "Unauthorized user",
+//     });
+//   }
+// };
+
 const authMiddleware = async (req, res, next) => {
-  const token = req.cookies.token;
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  // console.log(authHeader);
 
   if (!token)
     return res.status(401).json({
