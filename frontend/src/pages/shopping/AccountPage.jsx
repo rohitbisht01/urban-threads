@@ -1,7 +1,28 @@
-import React from "react";
+import Address from "@/components/ui/shopping/Address";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ShoppingOrders from "./ShoppingOrders";
 
 const AccountPage = () => {
-  return <div>AccountPage</div>;
+  return (
+    <div className="flex flex-col">
+      <div className="container mx-auto grid grid-cols-1 gap-8 py-8">
+        <div className="flex flex-col rounded-lg border bg-background p-6 shadow-sm">
+          <Tabs defaultValue="orders">
+            <TabsList>
+              <TabsTrigger value="orders">Orders</TabsTrigger>
+              <TabsTrigger value="address">Address</TabsTrigger>
+            </TabsList>
+            <TabsContent value="orders">
+              <ShoppingOrders />
+            </TabsContent>
+            <TabsContent value="address">
+              <Address />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default AccountPage;

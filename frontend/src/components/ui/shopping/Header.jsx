@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import DarkLogo from "/icon-dark.svg";
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "../sheet";
+import { Sheet, SheetContent, SheetTrigger } from "../sheet";
 import { Button } from "../button";
 import { CircleUser, LogOut, Menu, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -102,6 +102,7 @@ const HeaderRightContent = ({ user }) => {
           <span className="sr-only">Shopping Cart</span>
         </Button>
         <CartWrapper
+          setOpenCartSheet={setOpenCartSheet}
           cartItems={
             cartItems && cartItems.items?.length > 0 ? cartItems.items : []
           }
