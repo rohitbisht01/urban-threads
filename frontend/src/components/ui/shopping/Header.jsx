@@ -93,7 +93,7 @@ const HeaderRightContent = ({ user }) => {
   }, [dispatch]);
 
   return (
-    <div className="flex lg:items-center lg:flex-row flex-col gap-3">
+    <div className="flex lg:items-center lg:flex-row  sm:flex-row gap-3">
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button
           variant="outline"

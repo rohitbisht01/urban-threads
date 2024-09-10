@@ -2,6 +2,20 @@
 
 Urban Thread is a modern e-commerce platform built to provide seamless shopping experiences for clothing enthusiasts. It features both user and admin views, secure authentication, and an integrated payment gateway for hassle-free transactions.
 
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)
+
+![alt text](image-4.png)
+
+![alt text](image-5.png)
+
+![alt text](image-6.png)
+
 ## Features
 
 ### User Features:
